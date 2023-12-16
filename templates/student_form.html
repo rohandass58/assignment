@@ -1,0 +1,113 @@
+<!-- templates/student_form.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details Form</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+
+        <h2 style="text-align: center; margin-bottom: 20px;">Student Details Form</h2>
+
+        <label for="{{ form.name.id_for_label }}">Name:</label>
+        {{ form.name }}
+        {{ form.name.errors }}
+
+        <label for="{{ form.gender.id_for_label }}">Gender:</label>
+        {{ form.gender }}
+        {{ form.gender.errors }}
+
+        <label for="{{ form.adhar_card_number.id_for_label }}">Adhar Card Number:</label>
+        {{ form.adhar_card_number }}
+        {{ form.adhar_card_number.errors }}
+
+        <label for="{{ form.dob.id_for_label }}">Date of Birth:</label>
+        {{ form.dob }}
+        {{ form.dob.errors }}
+
+        <label for="{{ form.identification_marks.id_for_label }}">Identification Marks:</label>
+        {{ form.identification_marks }}
+        {{ form.identification_marks.errors }}
+
+        <label for="{{ form.admission_category.id_for_label }}">Admission Category:</label>
+        {{ form.admission_category }}
+        {{ form.admission_category.errors }}
+
+        <label for="{{ form.height.id_for_label }}">Height:</label>
+        {{ form.height }}
+        {{ form.height.errors }}
+
+        <label for="{{ form.weight.id_for_label }}">Weight:</label>
+        {{ form.weight }}
+        {{ form.weight.errors }}
+
+        <label for="{{ form.mail_id.id_for_label }}">Email:</label>
+        {{ form.mail_id }}
+        {{ form.mail_id.errors }}
+
+        <label for="{{ form.contact_detail.id_for_label }}">Contact Detail:</label>
+        {{ form.contact_detail }}
+        {{ form.contact_detail.errors }}
+
+        <label for="{{ form.address.id_for_label }}">Address:</label>
+        {{ form.address }}
+        {{ form.address.errors }}
+
+
+        <!-- Add other fields as needed -->
+
+        <button type="submit">Next</button>
+    </form>
+</body>
+</html>

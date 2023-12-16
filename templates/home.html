@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+
+
+    <ul>
+        <li><a href="{% url 'student_details_form' %}">Student Form</a></li>
+
+        <li><a href="{% url 'display_data' %}">Display Data</a></li>
+    </ul>
+
+</body>
+</html>
+
+{% endblock content %}

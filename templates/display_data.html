@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtered Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.14/jspdf.node.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+    <!-- Filter Form -->
+    <form id="filterForm">
+        <label for="class">Class:</label>
+        <input type="text" id="classInput">
+        <label for="section">Section:</label>
+        <input type="text" id="sectionInput">
+        <label for="admission_category">Admission Category:</label>
+        <input type="text" id="admissionCategoryInput">
+        <button type="button" onclick="filterData()">Filter</button>
+    </form>
+
+    <!-- Display Table -->
+    <table id="print-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Class</th>
+                <th>Section</th>
+                <th>Admission Category</th>
+            </tr>
+        </thead>
+        <tbody id="dataBody"></tbody>
+    </table>
+    
+    <!-- Export Buttons -->
+    <div>
+        <button type="button" onclick="exportToExcel()">Export to Excel</button>
+        <button type="button" onclick="printTable()">Print Table</button>
+    </div>
+
+    <!-- Hidden Inputs for Export -->
+    <input type="hidden" id="exportClassInput" name="class">
+    <input type="hidden" id="exportSectionInput" name="section">
+    <input type="hidden" id="exportAdmissionCategoryInput" name="admission_category">
+
+    <!-- Include the necessary libraries -->
+    <script>
+        window.jsPDF = window.jspdf.jsPDF;
+        window.jspdf.node.min.js = window.jspdf.node.min.js;
+        
+        async function filterData() {
+    const classValue = document.getElementById('classInput').value;
+    const sectionValue = document.getElementById('sectionInput').value;
+    const admissionCategoryValue = document.getElementById('admissionCategoryInput').value;
+
+    const apiUrl = `/api/academic-details/?class=${classValue}&section=${sectionValue}&admission_category=${admissionCategoryValue}`;
+
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        } else {
+            const data = await response.json();
+            displayData(data);
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+
+        function displayData(data) {
+            const tableBody = document.getElementById('dataBody');
+            tableBody.innerHTML = '';
+
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.student.name}</td>
+                    <td>${item.class_name}</td>
+                    <td>${item.section}</td>
+                    <td>${item.student.admission_category}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        async function exportToExcel() {
+            const classValue = document.getElementById('classInput').value;
+            const sectionValue = document.getElementById('sectionInput').value;
+            const admissionCategoryValue = document.getElementById('admissionCategoryInput').value;
+
+            const apiUrl = `/api/academic-details/?class=${classValue}&section=${sectionValue}&admission_category=${admissionCategoryValue}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                const worksheet = XLSX.utils.json_to_sheet(data.map(item => ({
+                    Name: item.student.name,
+                    Class: item.class_name,
+                    Section: item.section,
+                    'Admission Category': item.student.admission_category,
+                })));
+
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Filtered Data');
+                XLSX.writeFile(workbook, 'filtered_data.xlsx');
+            } catch (error) {
+                console.error('Error exporting to Excel:', error);
+            }
+        }
+
+        function printTable() {
+            const table = document.getElementById('print-table');
+            const newWindow = window.open('', '_blank');
+            newWindow.document.write('<html><head><title>Print</title></head><body>');
+            newWindow.document.write('<style>table{width:100%;border-collapse:collapse;margin-top:20px;}th,td{border:1px solid #dddddd;text-align:left;padding:8px;}th{background-color:#f2f2f2;}</style>');
+            newWindow.document.write('<h2>Filtered Data</h2>');
+            newWindow.document.write('<table>');
+            newWindow.document.write(table.innerHTML);
+            newWindow.document.write('</table>');
+            newWindow.document.write('</body></html>');
+            newWindow.document.close();
+            newWindow.print();
+        }
+    </script>
+</body>
+</html>
